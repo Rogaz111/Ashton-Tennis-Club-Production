@@ -1,0 +1,90 @@
+{
+  "project_info": {
+    "project_number": "82433493313",
+    "project_id": "ashtontennisklub",
+    "storage_bucket": "ashtontennisklub.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:82433493313:android:a733e7f8aeba808e1979c0",
+        "android_client_info": {
+          "package_name": "com.android.application"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "82433493313-21qsltu3p36mlsmpn5bba264s46lovt0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.android.application",
+            "certificate_hash": "0c2b3b8751d30a45518819d73c883e2fcceadcf5"
+          }
+        },
+        {
+          "client_id": "82433493313-3j7t0e0qnuji1dr1mme4etmm804eifrd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqAL7R58jz9ImKE4sSiITs6uztKoseqpU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "82433493313-3j7t0e0qnuji1dr1mme4etmm804eifrd.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "82433493313-7vmnn82mve5bv59cjvdl0ooh8d62mba0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.ashtonTennisKlub"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:82433493313:android:51bce51dbe8741f71979c0",
+        "android_client_info": {
+          "package_name": "com.example.ashton_tennis_unity"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "82433493313-3j7t0e0qnuji1dr1mme4etmm804eifrd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqAL7R58jz9ImKE4sSiITs6uztKoseqpU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "82433493313-3j7t0e0qnuji1dr1mme4etmm804eifrd.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "82433493313-7vmnn82mve5bv59cjvdl0ooh8d62mba0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.ashtonTennisKlub"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
