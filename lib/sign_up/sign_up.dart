@@ -1,11 +1,16 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-
+import '../auth/firebase_sign_up.dart';
+import '../auth/firebase_storage.dart';
 import 'sign_up_widgets.dart';
+
+final FirebaseAuth _auth = FirebaseAuth.instance;
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -21,6 +26,7 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController ageController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
+  final FirebaseAuthService _authService = FirebaseAuthService();
   File? image;
   final ImagePicker picker = ImagePicker();
   late AnimationController _controller;
@@ -221,6 +227,39 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
                               isLoading = true;
                             });
                             await Future.delayed(const Duration(seconds: 2));
+
+                            final user =await _authService.signUpWithEmailAndPassword(
+                              auth: _auth,
+                              email: emailController.text,
+                              password: passwordController.text,
+                              username: usernameController.text,
+                              phone: phoneController.text,
+                              age: int.parse(ageController.text.trim()),
+                              profileImageUrl: null, // Temporary null
+                            );
+
+                            if (user != null) {
+
+                              String? profileImageUrl;
+                              //If an image is selected, upload it
+                              if (image != null) {
+                                profileImageUrl = await uploadProfileImage(image!, user.uid);
+                              }
+
+                              //Update Firestore with the image URL if available
+                              if (profileImageUrl != null) {
+                                await FirebaseFirestore.instance
+                                    .collection('users')
+                                    .doc(user.uid)
+                                    .update({'profileImageUrl': profileImageUrl});
+                              }
+
+                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sign-up successful!')),
+                            );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sign-up failed. Please try again.')),
+                            );}
+
                             setState(() {
                               isLoading = false;
                             });
@@ -271,6 +310,7 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
       ),
     );
   }
+
   //Validation Helper Function
   String? validateForm() {
     if (usernameController.text.isEmpty) return 'username_empty';

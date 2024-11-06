@@ -4,7 +4,13 @@ import 'package:ashton_tennis_unity/sign_up/sign_up.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ashton_tennis_unity/login/login_widgets.dart';
+import '../auth/firebase_sign_in.dart';
 import '../constants/constants.dart';
+import '../home/home.dart';
+import 'login_helper_functions.dart';
+
+// Initialize firebase object
+final FirebaseAuthService _authService = FirebaseAuthService();
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -13,7 +19,8 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMixin {
+class _LoginPageState extends State<LoginPage>
+    with SingleTickerProviderStateMixin {
   // username and password field controllers
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
@@ -47,9 +54,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
         children: [
           Center(
             child: SingleChildScrollView(
-
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
-
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -59,9 +64,8 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                     height: 120,
                     decoration: BoxDecoration(
                       image: const DecorationImage(
-                        fit: BoxFit.scaleDown,
-                        image: AssetImage('assets/images/login_logo.png')
-                      ),
+                          fit: BoxFit.scaleDown,
+                          image: AssetImage('assets/images/login_logo.png')),
                       color: Colors.grey[200],
                       borderRadius: BorderRadius.circular(60),
                       boxShadow: [
@@ -106,7 +110,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                   // Username Field with Neumorphism
                   buildTextField(
                     controller: usernameController,
-                    hintText: 'Username',
+                    hintText: 'Email',
                     icon: Icons.person,
                   ),
                   const SizedBox(height: 20),
@@ -125,30 +129,54 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                     decoration: neumorphicBoxDecoration(),
                     child: ElevatedButton(
                       onPressed: () async {
+                        if (usernameController.text.isNotEmpty &&
+                            passwordController.text.isNotEmpty) {
 
-                        if(usernameController.text.isNotEmpty || passwordController.text.isNotEmpty){
-                            setState(() {
-                              isLoading = true;
-                            });
+                          // Stop loading indicator
+                          setState(() {
+                            isLoading = true;
+                          });
 
-                            await Future.delayed(const Duration(seconds: 2));
-                            usernameController.clear();
-                            passwordController.clear();
+                          // Check if the sign-in is successful by storing the result in a variable
+                          final user = await handleSignIn(
+                            emailController: usernameController,
+                            passWordController: passwordController,
+                            instance_: _authService,
+                            context: context,
+                          );
 
-                            setState(() {
-                              isLoading = false;
-                            });
-                          }else{
-                          try{
+                          // Only navigate to HomePage if the sign-in was successful
+                          if (user != null) {
+
+                            //Fetch user data after user logged in
+                            final userData = await fetchUserData(user.uid);
+
+                            // Navigate to HomePage and pass the user data
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => HomePage(
+                                  userData: userData, // Pass user data to HomePage
+                                ),
+                              ),
+                            );
+                          }
+
+                          // Stop loading indicator
+                          setState(() {
+                            isLoading = false;
+                          });
+
+                        } else {
+                          try {
                             print(snackBarErrorMessage.toString());
-                            showNeumorphicSnackbar(context, snackBarErrorMessage);
-                          }catch(e){
+                            showNeumorphicSnackbar(
+                                context, snackBarErrorMessage);
+                          } catch (e) {
                             print(e.toString());
                           }
-
-                          }
-                        },
-
+                        }
+                      },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         backgroundColor: Colors.grey[200],
@@ -158,15 +186,15 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                         ),
                       ),
                       child: isLoading
-                          ?  buildLoadingIndicator()
+                          ? buildLoadingIndicator()
                           : Text(
-                        'Login',
-                        style: GoogleFonts.poppins(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.indigo,
-                        ),
-                      ),
+                              'Login',
+                              style: GoogleFonts.poppins(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.indigo,
+                              ),
+                            ),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -175,10 +203,11 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                   Container(
                     decoration: neumorphicBoxDecoration(),
                     child: OutlinedButton(
-                      onPressed: (){
+                      onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const SignUp()),
+                          MaterialPageRoute(
+                              builder: (context) => const SignUp()),
                         );
                       },
                       style: OutlinedButton.styleFrom(
@@ -204,9 +233,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                   // Forgot Password Option
                   Center(
                     child: TextButton(
-                      onPressed: () {
-
-                      },
+                      onPressed: () {},
                       child: Text(
                         'Forgot Password?',
                         style: GoogleFonts.poppins(
@@ -225,12 +252,14 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
       ),
     );
   }
+
   // Custom Loading Indicator Widget
   Widget buildLoadingIndicator() {
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
-        double angle = _controller.value * 6.3; // Full rotation in radians (360 degrees)
+        double angle =
+            _controller.value * 6.3; // Full rotation in radians (360 degrees)
 
         // Calculate offsets for two balls
         double radius = 20; // Adjust as needed for spacing
@@ -271,10 +300,10 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
         boxShadow: [
           BoxShadow(
             color: Colors.grey[400]!,
-            offset:  const Offset(3, 3),
+            offset: const Offset(3, 3),
             blurRadius: 6,
           ),
-           const BoxShadow(
+          const BoxShadow(
             color: Colors.white,
             offset: Offset(-3, -3),
             blurRadius: 6,
