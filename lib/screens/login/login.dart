@@ -1,16 +1,20 @@
 // ignore_for_file: prefer_final_fields
 import 'dart:math';
-import 'package:ashton_tennis_unity/sign_up/sign_up.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ashton_tennis_unity/login/login_widgets.dart';
-import '../auth/firebase_sign_in.dart';
-import '../constants/constants.dart';
+import 'package:logger/logger.dart';
+import '../../auth/firebase_sign_in.dart';
+import '../../constants/constants.dart';
+import '../forget_password/forget_password_unauth.dart';
 import '../home/home.dart';
+import '../sign_up/sign_up.dart';
+import '../sign_up/sign_up_widgets.dart';
 import 'login_helper_functions.dart';
 
 // Initialize firebase object
 final FirebaseAuthService _authService = FirebaseAuthService();
+
+final Logger logger = Logger();
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -129,51 +133,64 @@ class _LoginPageState extends State<LoginPage>
                     decoration: neumorphicBoxDecoration(),
                     child: ElevatedButton(
                       onPressed: () async {
+                        logger.i('Login button clicked');
+
                         if (usernameController.text.isNotEmpty &&
                             passwordController.text.isNotEmpty) {
-
                           // Stop loading indicator
                           setState(() {
                             isLoading = true;
                           });
+                          logger.i('Username and Password fields not empty');
 
-                          // Check if the sign-in is successful by storing the result in a variable
-                          final user = await handleSignIn(
-                            emailController: usernameController,
-                            passWordController: passwordController,
-                            instance_: _authService,
-                            context: context,
-                          );
-
-                          // Only navigate to HomePage if the sign-in was successful
-                          if (user != null) {
-
-                            //Fetch user data after user logged in
-                            final userData = await fetchUserData(user.uid);
-
-                            // Navigate to HomePage and pass the user data
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => HomePage(
-                                  userData: userData, // Pass user data to HomePage
-                                ),
-                              ),
+                          try {
+                            // Check if the sign-in is successful by storing the result in a variable
+                            final user = await handleSignIn(
+                              emailController: usernameController,
+                              passWordController: passwordController,
+                              instance_: _authService,
+                              context: context,
                             );
+
+                            // Only navigate to HomePage if the sign-in was successful
+                            if (user != null) {
+                              logger.i('User Successfully found.');
+                              logger.i('Fetching user data');
+
+                              //Fetch user data after user logged in
+                              final userData = await fetchUserData(user.uid);
+                              logger.i(userData['username']);
+                              logger.i('User data fetched...');
+                              logger.i('Routing to HomePage');
+
+                              // Navigate to HomePage and pass the user data
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => HomePage(
+                                    userData:
+                                        userData, // Pass user data to HomePage
+                                  ),
+                                ),
+                              );
+                            }
+                            setState(() {
+                              isLoading = false;
+                            });
+                          } catch (e) {
+                            setState(() {
+                              isLoading = false;
+                            });
+                            logger.i('Circular loader stopped');
                           }
-
-                          // Stop loading indicator
-                          setState(() {
-                            isLoading = false;
-                          });
-
                         } else {
                           try {
-                            print(snackBarErrorMessage.toString());
+                            logger.e(
+                                'Error Occurred in sign in. Error: $snackBarErrorMessage}');
                             showNeumorphicSnackbar(
                                 context, snackBarErrorMessage);
                           } catch (e) {
-                            print(e.toString());
+                            logger.e('Error Showing snackbar. Error: $e}');
                           }
                         }
                       },
@@ -204,6 +221,7 @@ class _LoginPageState extends State<LoginPage>
                     decoration: neumorphicBoxDecoration(),
                     child: OutlinedButton(
                       onPressed: () {
+                        logger.i('Sign Up button clicked');
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -233,7 +251,10 @@ class _LoginPageState extends State<LoginPage>
                   // Forgot Password Option
                   Center(
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        logger.i('Forget Password button clicked.');
+                        showForgotPasswordDialog(context);
+                      },
                       child: Text(
                         'Forgot Password?',
                         style: GoogleFonts.poppins(

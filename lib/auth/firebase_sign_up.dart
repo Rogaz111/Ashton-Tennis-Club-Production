@@ -1,13 +1,11 @@
-import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:logger/logger.dart';
 import '../models/user.dart';
 
 class FirebaseAuthService {
-  //final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final Logger logger = Logger();
 
   // Sign up with email and password, and store additional user details in Firestore
   Future<User?> signUpWithEmailAndPassword({
@@ -17,6 +15,7 @@ class FirebaseAuthService {
     required String username,
     required String phone,
     required int age,
+    String? role,
     String? profileImageUrl,
   }) async {
     try {
@@ -33,15 +32,18 @@ class FirebaseAuthService {
         email: email,
         phone: phone,
         age: age,
+        role: 'member',
         profileImageUrl: profileImageUrl,
       );
 
       // Save user info to Firestore
-      await _firestore.collection('users').doc(newUser.uid).set(newUser.toMap());
-
+      await _firestore
+          .collection('users')
+          .doc(newUser.uid)
+          .set(newUser.toMap());
       return userCredential.user;
     } catch (e) {
-      print('Error signing up: $e');
+      logger.e('Error signing up: $e');
       return null;
     }
   }

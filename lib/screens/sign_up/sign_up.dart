@@ -1,13 +1,12 @@
 import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import '../auth/firebase_sign_up.dart';
-import '../auth/firebase_storage.dart';
+import '../../auth/firebase_sign_up.dart';
+import '../../auth/firebase_storage.dart';
 import 'sign_up_widgets.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -20,7 +19,8 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>(); // Global key for form validation
+  final GlobalKey<FormState> _formKey =
+      GlobalKey<FormState>(); // Global key for form validation
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -105,10 +105,10 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
                       backgroundImage: image != null ? FileImage(image!) : null,
                       child: image == null
                           ? Icon(
-                        Icons.camera_alt,
-                        color: Colors.grey[700],
-                        size: 30,
-                      )
+                              Icons.camera_alt,
+                              color: Colors.grey[700],
+                              size: 30,
+                            )
                           : null,
                     ),
                   ),
@@ -151,7 +151,8 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Email is required';
-                    } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                    } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
+                        .hasMatch(value)) {
                       return 'Enter a valid email';
                     }
                     return null;
@@ -166,7 +167,8 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Age is required';
-                    } else if (int.tryParse(value) == null || int.parse(value) <= 0) {
+                    } else if (int.tryParse(value) == null ||
+                        int.parse(value) <= 0) {
                       return 'Enter a valid age';
                     }
                     return null;
@@ -194,78 +196,89 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
                   decoration: neumorphicBoxDecoration(),
                   child: ElevatedButton(
                     onPressed: () async {
-                        String? errorCode = validateForm();
-                        switch (errorCode) {
-                          case 'username_empty':
-                            showNeumorphicSnackbar(context, 'Username is required');
-                            break;
-                          case 'phone_empty':
-                            showNeumorphicSnackbar(context, 'Phone number is required');
-                            break;
-                          case 'email_empty':
-                            showNeumorphicSnackbar(context, 'Email is required');
-                            break;
-                          case 'email_invalid':
-                            showNeumorphicSnackbar(context, 'Enter a valid email');
-                            break;
-                          case 'age_empty':
-                            showNeumorphicSnackbar(context, 'Age is required');
-                            break;
-                          case 'age_invalid':
-                            showNeumorphicSnackbar(context, 'Enter a valid age');
-                            break;
-                          case 'password_empty':
-                            showNeumorphicSnackbar(context, 'Password is required');
-                            break;
-                          case 'password_short':
-                            showNeumorphicSnackbar(context, 'Password must be at least 6 characters');
-                            break;
-                          default:
-
+                      String? errorCode = validateForm();
+                      switch (errorCode) {
+                        case 'username_empty':
+                          showNeumorphicSnackbar(
+                              context, 'Username is required');
+                          break;
+                        case 'phone_empty':
+                          showNeumorphicSnackbar(
+                              context, 'Phone number is required');
+                          break;
+                        case 'email_empty':
+                          showNeumorphicSnackbar(context, 'Email is required');
+                          break;
+                        case 'email_invalid':
+                          showNeumorphicSnackbar(
+                              context, 'Enter a valid email');
+                          break;
+                        case 'age_empty':
+                          showNeumorphicSnackbar(context, 'Age is required');
+                          break;
+                        case 'age_invalid':
+                          showNeumorphicSnackbar(context, 'Enter a valid age');
+                          break;
+                        case 'password_empty':
+                          showNeumorphicSnackbar(
+                              context, 'Password is required');
+                          break;
+                        case 'password_short':
+                          showNeumorphicSnackbar(context,
+                              'Password must be at least 6 characters');
+                          break;
+                        default:
                           // No validation errors, proceed with sign-up logic
-                            setState(() {
-                              isLoading = true;
-                            });
-                            await Future.delayed(const Duration(seconds: 2));
+                          setState(() {
+                            isLoading = true;
+                          });
 
-                            final user =await _authService.signUpWithEmailAndPassword(
-                              auth: _auth,
-                              email: emailController.text,
-                              password: passwordController.text,
-                              username: usernameController.text,
-                              phone: phoneController.text,
-                              age: int.parse(ageController.text.trim()),
-                              profileImageUrl: null, // Temporary null
+                          final user =
+                              await _authService.signUpWithEmailAndPassword(
+                            auth: _auth,
+                            email: emailController.text,
+                            password: passwordController.text,
+                            username: usernameController.text,
+                            phone: phoneController.text,
+                            age: int.parse(ageController.text.trim()),
+                            role: 'member',
+                            profileImageUrl: null, // Temporary null
+                          );
+
+                          if (user != null) {
+                            String? profileImageUrl;
+                            //If an image is selected, upload it
+                            if (image != null) {
+                              profileImageUrl =
+                                  await uploadProfileImage(image!, user.uid);
+                            }
+
+                            //Update Firestore with the image URL if available
+                            if (profileImageUrl != null) {
+                              await FirebaseFirestore.instance
+                                  .collection('users')
+                                  .doc(user.uid)
+                                  .update({'profileImageUrl': profileImageUrl});
+                            }
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text('Sign-up successful!')),
                             );
-
-                            if (user != null) {
-
-                              String? profileImageUrl;
-                              //If an image is selected, upload it
-                              if (image != null) {
-                                profileImageUrl = await uploadProfileImage(image!, user.uid);
-                              }
-
-                              //Update Firestore with the image URL if available
-                              if (profileImageUrl != null) {
-                                await FirebaseFirestore.instance
-                                    .collection('users')
-                                    .doc(user.uid)
-                                    .update({'profileImageUrl': profileImageUrl});
-                              }
-
-                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sign-up successful!')),
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text(
+                                      'Sign-up failed. Please try again.')),
                             );
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sign-up failed. Please try again.')),
-                            );}
+                          }
 
-                            setState(() {
-                              isLoading = false;
-                            });
-                            Navigator.pop(context);
-                      }},
-
+                          setState(() {
+                            isLoading = false;
+                          });
+                          Navigator.pop(context);
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.grey[200],
                       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -277,13 +290,13 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
                     child: isLoading
                         ? buildLoadingIndicator()
                         : Text(
-                      'Sign Up',
-                      style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.indigo,
-                      ),
-                    ),
+                            'Sign Up',
+                            style: GoogleFonts.poppins(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.indigo,
+                            ),
+                          ),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -328,7 +341,7 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
   }
 
   Widget buildLoadingIndicator() {
-    if (_controller == null) return Container(); // Check if _controller is initialized
+    // Check if _controller is initialized
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {

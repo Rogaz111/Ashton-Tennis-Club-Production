@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:logger/logger.dart';
 
+final Logger logger = Logger();
 String? profileImageUrl;
 final FirebaseStorage _storage = FirebaseStorage.instance;
 
@@ -14,7 +16,7 @@ Future<String?> uploadProfileImage(File image, String uid) async {
     // Get and return the download URL
     return await storageRef.getDownloadURL();
   } catch (e) {
-    print('Error uploading profile image: $e');
+    logger.w('Error uploading profile image: $e');
     return null;
   }
 }

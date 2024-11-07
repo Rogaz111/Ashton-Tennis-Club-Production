@@ -1,22 +1,27 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
+
+final Logger logger = Logger();
 
 class FirebaseAuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // Sign in with email and password
-  Future<User?> signInWithEmailAndPassword(String email, String password) async {
+  Future<User?> signInWithEmailAndPassword(
+      String email, String password) async {
     try {
-      final userCredential = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      final userCredential = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
       return userCredential.user; // Returns the user if sign-in is successful
     } catch (e) {
-      print('Error signing in: $e');
+      logger.w('Error signing in: $e');
       return null; // Returns null if there's an error
     }
   }
 }
 
-//Function to handle user signin
+//Function to handle user sign in
 Future<User?> handleSignIn({
   required TextEditingController emailController,
   required TextEditingController passWordController,

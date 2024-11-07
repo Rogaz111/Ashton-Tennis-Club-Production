@@ -3,6 +3,7 @@ class AppUser {
   final String username;
   final String email;
   final String phone;
+  final String? role;
   final int age;
   final String? profileImageUrl;
 
@@ -12,6 +13,7 @@ class AppUser {
     required this.email,
     required this.phone,
     required this.age,
+    this.role,
     this.profileImageUrl,
   });
 
@@ -23,19 +25,8 @@ class AppUser {
       'email': email,
       'phone': phone,
       'age': age,
+      'role': role,
       'profileImageUrl': profileImageUrl,
     };
-  }
-
-  // Optional: Initialize an AppUser from Firestore data
-  factory AppUser.fromMap(Map<String, dynamic> data) {
-    return AppUser(
-      uid: data['uid'] ?? '',
-      username: data['username'] ?? '',
-      email: data['email'] ?? '',
-      phone: data['phone'] ?? '',
-      age: data['age'] ?? 0,
-      profileImageUrl: data['profileImageUrl'],
-    );
   }
 }

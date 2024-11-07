@@ -1,8 +1,66 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../login/login.dart';
+
+//AppBar Widget
+AppBar buildAppBar(BuildContext context) {
+  return AppBar(
+    title: Text(
+      'Home',
+      style: GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.w600),
+    ),
+    centerTitle: true,
+    elevation: 0,
+    backgroundColor: Colors.transparent,
+    flexibleSpace: Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF3F51B5), Color(0xFF7986CB)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+      ),
+    ),
+    actions: [
+      PopupMenuButton(
+        icon: const Icon(Icons.settings),
+        itemBuilder: (context) => [
+          PopupMenuItem(
+            child: ListTile(
+              leading: const Icon(Icons.logout, color: Colors.black54),
+              title: Text('Logout', style: GoogleFonts.poppins()),
+            ),
+            onTap: () async {
+              await FirebaseAuth.instance.signOut();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginPage()),
+              );
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Successfully logged out')),
+              );
+            },
+          ),
+          PopupMenuItem(
+            child: ListTile(
+              leading: const Icon(Icons.settings, color: Colors.black54),
+              title: Text('Settings', style: GoogleFonts.poppins()),
+            ),
+            onTap: () {
+              // Implement dark mode logic here
+            },
+          ),
+        ],
+      ),
+    ],
+  );
+}
+
 //Drawer Widget
-Widget buildModernDrawer(BuildContext context, String? username, String? email, String? profileImageUrl) {
+Widget buildModernDrawer(BuildContext context, String? username, String? email,
+    String? profileImageUrl) {
   return Drawer(
     child: ListView(
       padding: EdgeInsets.zero,
@@ -16,42 +74,58 @@ Widget buildModernDrawer(BuildContext context, String? username, String? email, 
             ),
           ),
           // Adjust the padding or height if needed
-          padding: EdgeInsets.zero, // removes default padding if overflow persists
+          padding:
+              EdgeInsets.zero, // removes default padding if overflow persists
           child: SizedBox(
             height: 160, // Increase this value if needed
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                 CircleAvatar(
+                CircleAvatar(
                   radius: 40,
                   backgroundImage: profileImageUrl != null
                       ? NetworkImage(profileImageUrl)
-                      : const AssetImage('assets/images/app_logo.png') as ImageProvider,
+                      : const AssetImage('assets/images/app_logo.png')
+                          as ImageProvider,
                 ),
                 const SizedBox(height: 10),
-                Text(username ?? 'User', style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+                Text(username ?? 'User',
+                    style: GoogleFonts.poppins(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white)),
                 const SizedBox(height: 5),
-                Text(email ?? 'user@example.com', style: GoogleFonts.poppins(fontSize: 14, color: Colors.white70)),
+                Text(email ?? 'user@example.com',
+                    style: GoogleFonts.poppins(
+                        fontSize: 14, color: Colors.white70)),
               ],
             ),
           ),
         ),
+        buildListTile(Icons.home, 'Home'),
+        buildListTile(Icons.article, 'Documents'),
+        buildListTile(Icons.calendar_month, 'Calendar'),
+        buildListTile(Icons.photo_album, 'Gallery'),
+        buildListTile(Icons.sports_tennis, 'Rankings'),
+        buildListTile(Icons.phone, 'Contact Us'),
+        buildListTile(Icons.person, 'My Profile')
       ],
     ),
   );
 }
 
 //Drawer List tile Widget
-Widget buildListTile(IconData icon, String title, String route, BuildContext context) {
+Widget buildListTile(IconData icon, String title) {
   return ListTile(
     leading: Icon(icon, color: Colors.indigo),
     title: Text(
       title,
-      style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.grey[800]),
+      style: GoogleFonts.poppins(
+          fontSize: 16, fontWeight: FontWeight.w500, color: Colors.grey[800]),
     ),
     onTap: () {
-      Navigator.pop(context);
-      Navigator.pushNamed(context, route);
+      // Navigator.pop(context);
+      //Navigator.pushNamed(context, route);
     },
   );
 }
@@ -109,8 +183,10 @@ Widget buildNewsSection() {
         elevation: 0,
         child: ListTile(
           leading: const Icon(Icons.info, color: Colors.indigo),
-          title: Text('Court Renovation Completed', style: GoogleFonts.poppins(color: Colors.grey[800])),
-          subtitle: Text('Our courts are now open for bookings!', style: GoogleFonts.poppins(color: Colors.grey[600])),
+          title: Text('Court Renovation Completed',
+              style: GoogleFonts.poppins(color: Colors.grey[800])),
+          subtitle: Text('Our courts are now open for bookings!',
+              style: GoogleFonts.poppins(color: Colors.grey[600])),
         ),
       ),
     ],
@@ -133,13 +209,17 @@ Widget buildUpcomingEvents() {
       const SizedBox(height: 10),
       ListTile(
         leading: const Icon(Icons.calendar_today, color: Colors.indigo),
-        title: Text('Beginner’s Tournament', style: GoogleFonts.poppins(color: Colors.grey[800])),
-        subtitle: Text('2 PM, Oct 31st', style: GoogleFonts.poppins(color: Colors.grey[600])),
+        title: Text('Beginner’s Tournament',
+            style: GoogleFonts.poppins(color: Colors.grey[800])),
+        subtitle: Text('2 PM, Oct 31st',
+            style: GoogleFonts.poppins(color: Colors.grey[600])),
       ),
       ListTile(
         leading: const Icon(Icons.sports_tennis, color: Colors.indigo),
-        title: Text('Tennis Workshop', style: GoogleFonts.poppins(color: Colors.grey[800])),
-        subtitle: Text('Nov 2nd, 10 AM - 1 PM', style: GoogleFonts.poppins(color: Colors.grey[600])),
+        title: Text('Tennis Workshop',
+            style: GoogleFonts.poppins(color: Colors.grey[800])),
+        subtitle: Text('Nov 2nd, 10 AM - 1 PM',
+            style: GoogleFonts.poppins(color: Colors.grey[600])),
       ),
     ],
   );
@@ -154,8 +234,12 @@ Widget buildActionButton(IconData icon, String label) {
           color: Colors.grey[200],
           shape: BoxShape.circle,
           boxShadow: [
-            BoxShadow(color: Colors.grey[400]!, offset: const Offset(6, 6), blurRadius: 12),
-            const BoxShadow(color: Colors.white, offset: Offset(-6, -6), blurRadius: 12),
+            BoxShadow(
+                color: Colors.grey[400]!,
+                offset: const Offset(6, 6),
+                blurRadius: 12),
+            const BoxShadow(
+                color: Colors.white, offset: Offset(-6, -6), blurRadius: 12),
           ],
         ),
         child: IconButton(
@@ -164,7 +248,8 @@ Widget buildActionButton(IconData icon, String label) {
         ),
       ),
       const SizedBox(height: 5),
-      Text(label, style: GoogleFonts.poppins(fontSize: 14, color: Colors.grey[800])),
+      Text(label,
+          style: GoogleFonts.poppins(fontSize: 14, color: Colors.grey[800])),
     ],
   );
 }
