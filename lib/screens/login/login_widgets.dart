@@ -1,12 +1,14 @@
 // Custom TextField Widget with Neumorphism
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 // Widget handles Login Screen Text fields, Login and Password
 Widget buildTextField({
   required TextEditingController controller,
   required String hintText,
   required IconData icon,
   bool obscureText = false,
+  VoidCallback? toggleObscureText, // Optional callback to toggle obscure text
 }) {
   return Container(
     decoration: neumorphicBoxDecoration(),
@@ -20,6 +22,15 @@ Widget buildTextField({
         hintText: hintText,
         hintStyle: GoogleFonts.poppins(color: Colors.grey[600]),
         prefixIcon: Icon(icon, color: Colors.indigo),
+        suffixIcon: toggleObscureText != null
+            ? IconButton(
+                icon: Icon(
+                  obscureText ? Icons.visibility_off : Icons.visibility,
+                  color: Colors.grey[600],
+                ),
+                onPressed: toggleObscureText, // Call the toggle function
+              )
+            : null, // Hide suffix icon if toggleObscureText is null
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
@@ -78,7 +89,8 @@ void showNeumorphicSnackbar(BuildContext context, String message) {
         ),
       ),
     ),
-    backgroundColor: Colors.grey[200]!.withOpacity(0.9), // Use semi-transparency
+    backgroundColor:
+        Colors.grey[200]!.withOpacity(0.9), // Use semi-transparency
     elevation: 0,
     behavior: SnackBarBehavior.floating,
     duration: const Duration(seconds: 2),

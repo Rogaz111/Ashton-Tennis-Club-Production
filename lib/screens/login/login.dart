@@ -8,8 +8,8 @@ import '../../constants/constants.dart';
 import '../forget_password/forget_password_unauth.dart';
 import '../home/home.dart';
 import '../sign_up/sign_up.dart';
-import '../sign_up/sign_up_widgets.dart';
 import 'login_helper_functions.dart';
+import 'login_widgets.dart';
 
 // Initialize firebase object
 final FirebaseAuthService _authService = FirebaseAuthService();
@@ -28,6 +28,7 @@ class _LoginPageState extends State<LoginPage>
   // username and password field controllers
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
+  bool obscurePassword = true;
 
   bool isLoading = false;
   late AnimationController _controller;
@@ -121,11 +122,15 @@ class _LoginPageState extends State<LoginPage>
 
                   // Password Field with Neumorphism
                   buildTextField(
-                    controller: passwordController,
-                    hintText: 'Password',
-                    icon: Icons.lock,
-                    obscureText: true,
-                  ),
+                      controller: passwordController,
+                      hintText: 'Password',
+                      icon: Icons.lock,
+                      obscureText: obscurePassword,
+                      toggleObscureText: () {
+                        setState(() {
+                          obscurePassword = !obscurePassword;
+                        });
+                      }),
                   const SizedBox(height: 30),
 
                   // Login Button with Neumorphism

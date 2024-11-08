@@ -1,7 +1,9 @@
+import 'package:ashton_tennis_unity/screens/home/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../drawer_screens/my_profile.dart';
 import '../login/login.dart';
 
 //AppBar Widget
@@ -102,20 +104,21 @@ Widget buildModernDrawer(BuildContext context, String? username, String? email,
             ),
           ),
         ),
-        buildListTile(Icons.home, 'Home'),
-        buildListTile(Icons.article, 'Documents'),
-        buildListTile(Icons.calendar_month, 'Calendar'),
-        buildListTile(Icons.photo_album, 'Gallery'),
-        buildListTile(Icons.sports_tennis, 'Rankings'),
-        buildListTile(Icons.phone, 'Contact Us'),
-        buildListTile(Icons.person, 'My Profile')
+        buildListTile(Icons.home, 'Home', context, LoginPage()),
+        buildListTile(Icons.article, 'Documents', context, LoginPage()),
+        buildListTile(Icons.calendar_month, 'Calendar', context, LoginPage()),
+        buildListTile(Icons.photo_album, 'Gallery', context, LoginPage()),
+        buildListTile(Icons.sports_tennis, 'Rankings', context, LoginPage()),
+        buildListTile(Icons.phone, 'Contact Us', context, LoginPage()),
+        buildListTile(Icons.person, 'My Profile', context, const MyProfile())
       ],
     ),
   );
 }
 
 //Drawer List tile Widget
-Widget buildListTile(IconData icon, String title) {
+Widget buildListTile(
+    IconData icon, String title, BuildContext context, Widget destination) {
   return ListTile(
     leading: Icon(icon, color: Colors.indigo),
     title: Text(
@@ -124,8 +127,10 @@ Widget buildListTile(IconData icon, String title) {
           fontSize: 16, fontWeight: FontWeight.w500, color: Colors.grey[800]),
     ),
     onTap: () {
-      // Navigator.pop(context);
-      //Navigator.pushNamed(context, route);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => destination),
+      );
     },
   );
 }

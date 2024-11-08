@@ -4,16 +4,17 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
 // Custom TextField Widget
-Widget buildTextField({
+Widget buildTextFieldSignup({
   required TextEditingController controller,
   required String hintText,
   required IconData icon,
   TextInputType keyboardType = TextInputType.text,
   bool obscureText = false,
+  VoidCallback? toggleObscureText, // Optional callback to toggle obscure text
   String? Function(String?)? validator, // Add validator parameter
 }) {
   return Container(
-    decoration: neumorphicBoxDecoration(),
+    decoration: neumorphicBoxDecorationSignUp(),
     child: TextFormField(
       controller: controller,
       obscureText: obscureText,
@@ -26,6 +27,15 @@ Widget buildTextField({
         hintText: hintText,
         hintStyle: GoogleFonts.poppins(color: Colors.grey[600]),
         prefixIcon: Icon(icon, color: Colors.indigo),
+        suffixIcon: toggleObscureText != null
+            ? IconButton(
+                icon: Icon(
+                  obscureText ? Icons.visibility_off : Icons.visibility,
+                  color: Colors.grey[600],
+                ),
+                onPressed: toggleObscureText, // Call the toggle function
+              )
+            : null,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
@@ -36,7 +46,7 @@ Widget buildTextField({
 }
 
 // Neumorphic Box Decoration
-BoxDecoration neumorphicBoxDecoration() {
+BoxDecoration neumorphicBoxDecorationSignUp() {
   return BoxDecoration(
     color: Colors.grey[200],
     borderRadius: BorderRadius.circular(12),
@@ -62,12 +72,13 @@ Future<void> pickImage({
 }) async {
   final pickedFile = await picker.pickImage(source: ImageSource.gallery);
   if (pickedFile != null) {
-    onImagePicked(File(pickedFile.path)); // Calls the callback with the selected image
+    onImagePicked(
+        File(pickedFile.path)); // Calls the callback with the selected image
   }
 }
 
 // Snackbar Widget
-void showNeumorphicSnackbar(BuildContext context, String message) {
+void showNeumorphicSnackbarSignIn(BuildContext context, String message) {
   final snackBar = SnackBar(
     content: Container(
       padding: const EdgeInsets.all(16),
@@ -95,7 +106,8 @@ void showNeumorphicSnackbar(BuildContext context, String message) {
         ),
       ),
     ),
-    backgroundColor: Colors.grey[200]!.withOpacity(0.9), // Use semi-transparency
+    backgroundColor:
+        Colors.grey[200]!.withOpacity(0.9), // Use semi-transparency
     elevation: 0,
     behavior: SnackBarBehavior.floating,
     duration: const Duration(seconds: 2),

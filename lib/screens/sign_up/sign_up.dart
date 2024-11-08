@@ -31,6 +31,7 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
   final ImagePicker picker = ImagePicker();
   late AnimationController _controller;
   bool isLoading = false;
+  bool obscurePassword = true;
   bool isSnackbarVisible = false; // Track Snackbar visibility
 
   @override
@@ -116,7 +117,7 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
                 const SizedBox(height: 20),
 
                 // Form Fields with Validation
-                buildTextField(
+                buildTextFieldSignup(
                   controller: usernameController,
                   hintText: 'Username',
                   icon: Icons.person,
@@ -128,7 +129,7 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
                   },
                 ),
                 const SizedBox(height: 20),
-                buildTextField(
+                buildTextFieldSignup(
                   controller: phoneController,
                   hintText: 'Phone Number',
                   icon: Icons.phone,
@@ -143,7 +144,7 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
                   },
                 ),
                 const SizedBox(height: 20),
-                buildTextField(
+                buildTextFieldSignup(
                   controller: emailController,
                   hintText: 'Email',
                   icon: Icons.email,
@@ -159,7 +160,7 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
                   },
                 ),
                 const SizedBox(height: 20),
-                buildTextField(
+                buildTextFieldSignup(
                   controller: ageController,
                   hintText: 'Age',
                   icon: Icons.calendar_today,
@@ -175,11 +176,16 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
                   },
                 ),
                 const SizedBox(height: 20),
-                buildTextField(
+                buildTextFieldSignup(
                   controller: passwordController,
                   hintText: 'Password',
                   icon: Icons.lock,
-                  obscureText: true,
+                  obscureText: obscurePassword,
+                  toggleObscureText: () {
+                    setState(() {
+                      obscurePassword = !obscurePassword;
+                    });
+                  },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Password is required';
@@ -193,38 +199,41 @@ class _SignUpState extends State<SignUp> with SingleTickerProviderStateMixin {
 
                 // Sign-Up Button with Validation Check
                 Container(
-                  decoration: neumorphicBoxDecoration(),
+                  decoration: neumorphicBoxDecorationSignUp(),
                   child: ElevatedButton(
                     onPressed: () async {
                       String? errorCode = validateForm();
                       switch (errorCode) {
                         case 'username_empty':
-                          showNeumorphicSnackbar(
+                          showNeumorphicSnackbarSignIn(
                               context, 'Username is required');
                           break;
                         case 'phone_empty':
-                          showNeumorphicSnackbar(
+                          showNeumorphicSnackbarSignIn(
                               context, 'Phone number is required');
                           break;
                         case 'email_empty':
-                          showNeumorphicSnackbar(context, 'Email is required');
+                          showNeumorphicSnackbarSignIn(
+                              context, 'Email is required');
                           break;
                         case 'email_invalid':
-                          showNeumorphicSnackbar(
+                          showNeumorphicSnackbarSignIn(
                               context, 'Enter a valid email');
                           break;
                         case 'age_empty':
-                          showNeumorphicSnackbar(context, 'Age is required');
+                          showNeumorphicSnackbarSignIn(
+                              context, 'Age is required');
                           break;
                         case 'age_invalid':
-                          showNeumorphicSnackbar(context, 'Enter a valid age');
+                          showNeumorphicSnackbarSignIn(
+                              context, 'Enter a valid age');
                           break;
                         case 'password_empty':
-                          showNeumorphicSnackbar(
+                          showNeumorphicSnackbarSignIn(
                               context, 'Password is required');
                           break;
                         case 'password_short':
-                          showNeumorphicSnackbar(context,
+                          showNeumorphicSnackbarSignIn(context,
                               'Password must be at least 6 characters');
                           break;
                         default:
