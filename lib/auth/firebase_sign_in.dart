@@ -44,7 +44,8 @@ Future<User?> handleSignIn({
   } else {
     // Show error message if sign-in fails
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Invalid email or password')),
+      const SnackBar(
+          content: Text('Invalid email or password. Please try again.')),
     );
 
     // Return null to indicate a failed login

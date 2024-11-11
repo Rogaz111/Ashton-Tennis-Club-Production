@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 
 // My Profile screen appBar widget
 AppBar buildAppBar(BuildContext context) {
@@ -23,28 +25,43 @@ AppBar buildAppBar(BuildContext context) {
   );
 }
 
-// Neumorphic-style Button
-Widget buildActionButton(BuildContext context,
+// Used in My Profile Screen For Edit Profile and Reset Password Buttons
+Widget buildNeumorphicActionButton(BuildContext context,
     {required String label, required VoidCallback onPressed}) {
-  return ElevatedButton(
-    onPressed: onPressed,
-    style: ElevatedButton.styleFrom(
-      backgroundColor: Colors.indigo,
+  return GestureDetector(
+    onTap: onPressed,
+    child: Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-      shape: RoundedRectangleBorder(
+      decoration: BoxDecoration(
+        color: Colors.indigo,
         borderRadius: BorderRadius.circular(30),
+        boxShadow: [
+          // Light shadow
+          BoxShadow(
+            color: Colors.white.withOpacity(0.8),
+            offset: const Offset(-3, -3),
+            blurRadius: 5,
+          ),
+          // Dark shadow
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            offset: const Offset(3, 3),
+            blurRadius: 5,
+          ),
+        ],
       ),
-      shadowColor: Colors.grey[400],
-      elevation: 5,
-    ),
-    child: Text(
-      label,
-      style: GoogleFonts.poppins(
-          fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white),
+      child: Center(
+        child: Text(
+          label,
+          style: GoogleFonts.poppins(
+              fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white),
+        ),
+      ),
     ),
   );
 }
 
+// Used in My Profile Screen for Meta data fields display
 Widget buildFieldProfile(BuildContext context,
     {required String label,
     required TextEditingController usernameController,
@@ -78,7 +95,9 @@ Widget buildFieldProfile(BuildContext context,
           readOnly: readOnly,
           decoration: InputDecoration(
             filled: true,
-            fillColor: readOnly ? Colors.grey[200] : Colors.blueAccent[200],
+            fillColor: readOnly
+                ? Colors.grey[200]
+                : const Color(0xFFBBDEFB), // Light Blue
             hintStyle: GoogleFonts.poppins(color: Colors.grey[600]),
             prefixIcon: Icon(icon, color: Colors.indigo),
             border: OutlineInputBorder(
@@ -90,4 +109,17 @@ Widget buildFieldProfile(BuildContext context,
       ),
     ],
   );
+}
+
+//Image Picker Function My Profile Image Editing
+// Function to pick an image
+Future<void> pickImage({
+  required ImagePicker picker,
+  required void Function(File) onImagePicked,
+}) async {
+  final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+  if (pickedFile != null) {
+    onImagePicked(
+        File(pickedFile.path)); // Calls the callback with the selected image
+  }
 }

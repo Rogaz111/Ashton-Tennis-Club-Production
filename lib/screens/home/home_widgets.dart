@@ -62,7 +62,7 @@ AppBar buildAppBar(BuildContext context) {
 
 //Drawer Widget
 Widget buildModernDrawer(BuildContext context, String? username, String? email,
-    String? profileImageUrl) {
+    String? profileImageUrl, String? userId) {
   return Drawer(
     child: ListView(
       padding: EdgeInsets.zero,
@@ -110,7 +110,13 @@ Widget buildModernDrawer(BuildContext context, String? username, String? email,
         buildListTile(Icons.photo_album, 'Gallery', context, LoginPage()),
         buildListTile(Icons.sports_tennis, 'Rankings', context, LoginPage()),
         buildListTile(Icons.phone, 'Contact Us', context, LoginPage()),
-        buildListTile(Icons.person, 'My Profile', context, const MyProfile())
+        buildListTile(
+            Icons.person,
+            'My Profile',
+            context,
+            MyProfile(
+              uid: userId!,
+            ))
       ],
     ),
   );
@@ -136,17 +142,12 @@ Widget buildListTile(
 }
 
 //Welcome banner widget section
-Widget buildWelcomeBanner(String clubImage, String username) {
+Widget buildWelcomeBanner(String username) {
   return Row(
     children: [
-      CircleAvatar(
-        radius: 30,
-        backgroundImage: NetworkImage(clubImage),
-      ),
-      const SizedBox(width: 10),
       Expanded(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
               'Welcome, $username!',

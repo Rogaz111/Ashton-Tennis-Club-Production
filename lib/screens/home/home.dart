@@ -17,6 +17,7 @@ class _HomePageState extends State<HomePage> {
   String? username;
   String? email;
   String? profileImageUrl;
+  String? uid;
 
   @override
   void initState() {
@@ -26,6 +27,7 @@ class _HomePageState extends State<HomePage> {
       username = widget.userData['username'];
       email = widget.userData['email'];
       profileImageUrl = widget.userData['profileImageUrl'];
+      uid = widget.userData['uid'];
     });
   }
 
@@ -34,20 +36,13 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: buildAppBar(context),
-      drawer: buildModernDrawer(context, username, email, profileImageUrl),
+      drawer: buildModernDrawer(context, username, email, profileImageUrl, uid),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildNeumorphicContainer(
-                buildWelcomeBanner(clubImage, username ?? 'User')),
-            //const SizedBox(height: 20),
-            //_buildNeumorphicContainer(buildUpcomingEvents()),
-            //const SizedBox(height: 20),
-            //_buildQuickActions(),
-            //const SizedBox(height: 20),
-            //_buildNeumorphicContainer(buildNewsSection()),
+            _buildNeumorphicContainer(buildWelcomeBanner(username ?? 'User')),
           ],
         ),
       ),
