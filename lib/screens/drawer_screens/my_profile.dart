@@ -91,7 +91,7 @@ class _MyProfileState extends State<MyProfile>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(context),
+      appBar: buildAppBar(context, 'My Profile'),
       body: fetchingData
           ? buildLoadingIndicatorProfile() // Show loading animation
           : Stack(
@@ -236,7 +236,7 @@ class _MyProfileState extends State<MyProfile>
                               buildFieldProfile(context,
                                   label: 'Current Rank',
                                   usernameController: rankController,
-                                  readOnly: isReadOnly,
+                                  readOnly: true,
                                   inputType: TextInputType.number,
                                   icon: Icons.star),
                             ],
