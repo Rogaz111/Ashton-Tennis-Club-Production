@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'home_widgets.dart';
 
 class HomePage extends StatefulWidget {
@@ -12,12 +13,16 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final String clubImage =
       "https://langebergtennis.co.za/ashtontennisclub/sitepad-data/uploads/2024/08/Logo-3_4-1.jpg";
+  final Logger logger = Logger();
 
   // Variables to hold user details
   String? username;
   String? email;
   String? profileImageUrl;
+  String? role;
   String? uid;
+
+  bool isAdmin = false;
 
   @override
   void initState() {
@@ -28,15 +33,29 @@ class _HomePageState extends State<HomePage> {
       email = widget.userData['email'];
       profileImageUrl = widget.userData['profileImageUrl'];
       uid = widget.userData['uid'];
+      role = widget.userData['role'];
+      isAdmin = isAdministrator(role);
     });
+  }
+
+  // Function to check if logged in user is admin or member
+  bool isAdministrator(userRole) {
+    if (userRole == 'admin') {
+      logger.i('Administrator login detected.');
+      return true;
+    } else {
+      logger.i('Non administrator login detected.');
+      return false;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[200],
-      appBar: buildAppBar(context),
-      drawer: buildModernDrawer(context, username, email, profileImageUrl, uid),
+      appBar: buildAppBarHome(context),
+      drawer: buildModernDrawer(
+          context, username, email, profileImageUrl, uid, isAdmin),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(

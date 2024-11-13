@@ -4,10 +4,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
 // My Profile screen appBar widget
-AppBar buildAppBar(BuildContext context) {
+AppBar buildAppBar(BuildContext context, String title) {
   return AppBar(
     title: Text(
-      'My Profile',
+      title,
       style: GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.w600),
     ),
     centerTitle: true,
@@ -123,3 +123,5 @@ Future<void> pickImage({
         File(pickedFile.path)); // Calls the callback with the selected image
   }
 }
+
+//-------------------------Contact Us------------------------//

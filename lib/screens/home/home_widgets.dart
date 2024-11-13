@@ -1,13 +1,14 @@
-import 'package:ashton_tennis_unity/screens/home/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../placeholder_screen.dart';
+import '../drawer_screens/contact_us.dart';
 import '../drawer_screens/my_profile.dart';
 import '../login/login.dart';
 
 //AppBar Widget
-AppBar buildAppBar(BuildContext context) {
+AppBar buildAppBarHome(BuildContext context) {
   return AppBar(
     title: Text(
       'Home',
@@ -44,16 +45,7 @@ AppBar buildAppBar(BuildContext context) {
                 const SnackBar(content: Text('Successfully logged out')),
               );
             },
-          ),
-          PopupMenuItem(
-            child: ListTile(
-              leading: const Icon(Icons.settings, color: Colors.black54),
-              title: Text('Settings', style: GoogleFonts.poppins()),
-            ),
-            onTap: () {
-              // Implement dark mode logic here
-            },
-          ),
+          )
         ],
       ),
     ],
@@ -62,11 +54,12 @@ AppBar buildAppBar(BuildContext context) {
 
 //Drawer Widget
 Widget buildModernDrawer(BuildContext context, String? username, String? email,
-    String? profileImageUrl, String? userId) {
+    String? profileImageUrl, String? userId, bool admin) {
   return Drawer(
     child: ListView(
       padding: EdgeInsets.zero,
       children: [
+        // Drawer Header
         DrawerHeader(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -75,11 +68,9 @@ Widget buildModernDrawer(BuildContext context, String? username, String? email,
               end: Alignment.bottomRight,
             ),
           ),
-          // Adjust the padding or height if needed
-          padding:
-              EdgeInsets.zero, // removes default padding if overflow persists
+          padding: EdgeInsets.zero,
           child: SizedBox(
-            height: 160, // Increase this value if needed
+            height: 160,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -91,32 +82,74 @@ Widget buildModernDrawer(BuildContext context, String? username, String? email,
                           as ImageProvider,
                 ),
                 const SizedBox(height: 10),
-                Text(username ?? 'User',
-                    style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white)),
+                Text(
+                  username ?? 'User',
+                  style: GoogleFonts.poppins(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
                 const SizedBox(height: 5),
-                Text(email ?? 'user@example.com',
-                    style: GoogleFonts.poppins(
-                        fontSize: 14, color: Colors.white70)),
+                Text(
+                  email ?? 'user@example.com',
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    color: Colors.white70,
+                  ),
+                ),
               ],
             ),
           ),
         ),
-        buildListTile(Icons.home, 'Home', context, LoginPage()),
-        buildListTile(Icons.article, 'Documents', context, LoginPage()),
-        buildListTile(Icons.calendar_month, 'Calendar', context, LoginPage()),
-        buildListTile(Icons.photo_album, 'Gallery', context, LoginPage()),
-        buildListTile(Icons.sports_tennis, 'Rankings', context, LoginPage()),
-        buildListTile(Icons.phone, 'Contact Us', context, LoginPage()),
+
+        // Section 1: Features
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Text(
+            'Features',
+            style: GoogleFonts.poppins(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[600],
+            ),
+          ),
+        ),
+        buildListTile(
+            Icons.article, 'Documents', context, const PlaceHolderScreen()),
+        buildListTile(Icons.calendar_month, 'Calendar', context,
+            const PlaceHolderScreen()),
+        buildListTile(
+            Icons.photo_album, 'Gallery', context, const PlaceHolderScreen()),
+        buildListTile(Icons.sports_tennis, 'Rankings', context,
+            const PlaceHolderScreen()),
+
+        // Section 2: Account
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Text(
+            'Account',
+            style: GoogleFonts.poppins(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[600],
+            ),
+          ),
+        ),
+        buildListTile(
+            Icons.phone,
+            'Contact Us',
+            context,
+            ContactUsPage(
+              isAdmin: admin,
+            )),
         buildListTile(
             Icons.person,
             'My Profile',
             context,
             MyProfile(
               uid: userId!,
-            ))
+            )),
       ],
     ),
   );
