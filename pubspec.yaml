@@ -44,6 +44,8 @@ dependencies:
   logger: ^2.4.0
   image_picker: ^1.1.2
   uuid: ^4.5.1
+  introduction_screen: ^3.1.14
+  shared_preferences: ^2.3.3
 
 dev_dependencies:
   flutter_test:
@@ -72,8 +74,14 @@ flutter:
     - assets/images/login_logo.png
     - assets/images/memeber_default_image.png
     - assets/images/app_logo.png
-
-
+    - assets/images/landing_screen.png
+    - assets/images/sign_up_screen.png
+    - assets/images/login_click.png
+    - assets/images/animated_logo.gif
+    - assets/images/home_screen.png
+    - assets/images/drawer_showcase.png
+    - assets/images/my_profile_screen.png
+    - assets/images/contact_us_screen.png
 
 
 flutter_icons:

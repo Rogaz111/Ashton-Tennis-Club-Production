@@ -32,15 +32,6 @@ Future<List<Map<String, dynamic>>> fetchCommitteeMembers() async {
   }).toList();
 }
 
-// Edit member to committee_members collection - UPDATE -- Currently not in use
-Future<void> editCommitteeMember(
-    String docId, Map<String, dynamic> updatedData) async {
-  await FirebaseFirestore.instance
-      .collection('committee_members')
-      .doc(docId)
-      .update(updatedData);
-}
-
 // Delete member from committee_members collection - DELETE
 Future<void> deleteCommitteeMember(String docId) async {
   try {
