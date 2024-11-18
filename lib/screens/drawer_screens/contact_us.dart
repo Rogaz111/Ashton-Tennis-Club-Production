@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:ashton_tennis_unity/models/commitee_member.dart';
 import 'package:flutter/material.dart';
@@ -15,16 +16,32 @@ class ContactUsPage extends StatefulWidget {
   State<ContactUsPage> createState() => _ContactUsPageState();
 }
 
-class _ContactUsPageState extends State<ContactUsPage> {
+class _ContactUsPageState extends State<ContactUsPage>
+    with SingleTickerProviderStateMixin {
   late List<Map<String, dynamic>> committeeMembers = [];
   bool isLoading = true;
   bool isDialogLoading = false;
   var uuid = const Uuid().v4();
 
+  late AnimationController _controller;
+
   @override
   void initState() {
     super.initState();
+
+    // Initialize AnimationController
+    _controller = AnimationController(
+      vsync: this, // Provide TickerProvider
+      duration: const Duration(seconds: 2),
+    )..repeat(); // Start the animation loop
+
     fetchCommitteeMembersInit();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose(); // Dispose the controller
+    super.dispose();
   }
 
   Future<void> fetchCommitteeMembersInit() async {
@@ -34,7 +51,6 @@ class _ContactUsPageState extends State<ContactUsPage> {
   }
 
   //----Alert Dialog Builder -----//
-
   void _showAddMemberDialog() {
     final nameController = TextEditingController();
     final roleController = TextEditingController();
@@ -185,6 +201,63 @@ class _ContactUsPageState extends State<ContactUsPage> {
     );
   }
 
+  // Custom Loading Indicator
+  Widget _buildLoadingIndicator() {
+    return Center(
+      child: SizedBox(
+        width: 100,
+        height: 100,
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            double angle = _controller.value * 2 * pi; // Full rotation
+            double radius = 20; // Distance between balls
+
+            // Calculate positions for two animated balls
+            Offset ball1Offset = Offset(
+              radius * cos(angle),
+              radius * sin(angle),
+            );
+            Offset ball2Offset = Offset(
+              radius * -cos(angle),
+              radius * -sin(angle),
+            );
+
+            return Stack(
+              alignment: Alignment.center,
+              children: [
+                // Ball 1
+                Transform.translate(
+                  offset: ball1Offset,
+                  child: Container(
+                    width: 15,
+                    height: 15,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.blue,
+                    ),
+                  ),
+                ),
+                // Ball 2
+                Transform.translate(
+                  offset: ball2Offset,
+                  child: Container(
+                    width: 15,
+                    height: 15,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.red,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
   // Add Member Alert dialog text field helper method
   Widget _buildStyledTextField({
     required TextEditingController controller,
@@ -218,7 +291,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
     return Scaffold(
       appBar: buildAppBar(context, 'Contact Us'),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? _buildLoadingIndicator() // Use custom loader here
           : Column(
               children: [
                 // Informational Section
@@ -256,8 +329,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                     ),
                   ),
                 ),
-
-                // Reorder-able List
+                // Reorderable List
                 Expanded(
                   child: ReorderableListView.builder(
                     onReorder: (int oldIndex, int newIndex) {

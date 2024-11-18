@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -124,4 +125,62 @@ Future<void> pickImage({
   }
 }
 
-//-------------------------Contact Us------------------------//
+//-------------------------Birthdays Drawer Screen------------------------//
+
+// Custom Loading Indicator Widget
+Widget buildLoadingIndicatorProfile(AnimationController _controller) {
+  return Center(
+    child: SizedBox(
+      width: 100,
+      height: 100,
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          double angle = _controller.value * 2 * pi; // Full rotation
+          double radius = 20; // Distance between balls
+
+          // Calculate positions for two animated balls
+          Offset ball1Offset = Offset(
+            radius * cos(angle),
+            radius * sin(angle),
+          );
+          Offset ball2Offset = Offset(
+            radius * -cos(angle),
+            radius * -sin(angle),
+          );
+
+          return Stack(
+            alignment: Alignment.center,
+            children: [
+              // Ball 1
+              Transform.translate(
+                offset: ball1Offset,
+                child: Container(
+                  width: 15,
+                  height: 15,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.blue,
+                  ),
+                ),
+              ),
+
+              // Ball 2
+              Transform.translate(
+                offset: ball2Offset,
+                child: Container(
+                  width: 15,
+                  height: 15,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.red,
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    ),
+  );
+}
