@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../placeholder_screen.dart';
+import '../drawer_screens/birthdays_screen.dart';
 import '../drawer_screens/contact_us.dart';
 import '../drawer_screens/my_profile.dart';
 import '../login/login.dart';
@@ -128,7 +129,7 @@ Widget buildModernDrawer(BuildContext context, String? username, String? email,
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Text(
-            'Account',
+            'For me',
             style: GoogleFonts.poppins(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -136,6 +137,13 @@ Widget buildModernDrawer(BuildContext context, String? username, String? email,
             ),
           ),
         ),
+        buildListTile(
+            Icons.celebration,
+            'Birthdays',
+            context,
+            BirthdaysScreen(
+              isAdmin: admin,
+            )),
         buildListTile(
             Icons.phone,
             'Contact Us',
